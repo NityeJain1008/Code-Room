@@ -41,3 +41,9 @@
   padding-top: 5.5rem;
   padding-bottom: 5.5rem;
 }
+
+.logo {
+  width: 195px;
+  /* height: 10px; */
+  object-fit: contain;
+}
