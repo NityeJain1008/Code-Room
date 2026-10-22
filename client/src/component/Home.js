@@ -1,16 +1,29 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import {v4 as uuid}  from "uuid";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
     const [roomId, setRoomId] = useState("");
     const [username, setUsername] = useState("") ;
+    const navigate = useNavigate() ; 
 
     const generateRoomId = (e) =>{
         e.preventDefault() ; 
         const id = uuid();
         setRoomId(id) ; 
         toast.success("Room Id is Generated");
+    }
+
+    const joinRoom = () =>{
+        if(!roomId || !username){
+            toast.error("Both fields are Required")
+            return ; 
+        }
+        navigate(`/editor/${roomId}`, {
+            state : (username),
+        });
+        toast.success("Room is Created")
     }
 
     return (
@@ -48,7 +61,7 @@ function Home() {
                                 />
                             </div>
 
-                            <button className="btn btn-success btn-lg btn-block">
+                            <button onClick={joinRoom} className="btn btn-success btn-lg btn-block">
                                 Join Room
                             </button>
 
