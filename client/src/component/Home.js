@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import {v4 as uuid}  from "uuid";
 
 function Home() {
@@ -9,6 +10,7 @@ function Home() {
         e.preventDefault() ; 
         const id = uuid();
         setRoomId(id) ; 
+        toast.success("Room Id is Generated");
     }
 
     return (
@@ -38,6 +40,8 @@ function Home() {
 
                             <div className="form-group pb-2">
                                 <input
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
                                     type="text"
                                     className="form-control mb-2"
                                     placeholder="Username"
