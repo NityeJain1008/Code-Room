@@ -12,6 +12,7 @@ const io = new Server(server, {
 });
 
 const userSocketMap = {};
+const roomCodeMap = new Map();
 
 const getAllConnectedClients = (roomId) => {
     return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
@@ -44,6 +45,25 @@ io.on("connection", (socket) => {
                 socketId: socket.id,
             });
         });
+    });
+
+    socket.on("code-change", ({ roomId, code }) => {
+        if (typeof roomId !== "string" || typeof code !== "string" || !socket.rooms.has(roomId)) {
+            console.error("Rejected code change from socket outside its room");
+            return;
+        }
+
+        roomCodeMap.set(roomId, code);
+        socket.to(roomId).emit("code-change", { code });
+    });
+
+    socket.on("request-code", ({ roomId }) => {
+        if (typeof roomId !== "string" || !socket.rooms.has(roomId)) {
+            console.error("Rejected code sync request from socket outside its room");
+            return;
+        }
+
+        socket.emit("sync-code", { code: roomCodeMap.get(roomId) ?? "" });
     });
 
     socket.on("disconnecting", () => {
