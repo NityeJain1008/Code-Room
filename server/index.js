@@ -37,19 +37,32 @@ io.on("connection", (socket) => {
         const clients = getAllConnectedClients(roomId);
         console.log("Connected clients:", clients);
 
-        clients.forEach(({socketId}) => {
+        clients.forEach(({ socketId }) => {
             io.to(socketId).emit('joined', {
-                clients, 
+                clients,
                 username,
                 socketId: socket.id,
-            }) ;  
+            });
+        });
+    });
+
+    socket.on("disconnecting", () => {
+        const username = userSocketMap[socket.id];
+        console.log(`User disconnected: ${socket.id} with username ${username}`);
+
+        const rooms = [...socket.rooms];
+        rooms.forEach((roomId) => {
+            if (roomId !== socket.id) {
+                socket.to(roomId).emit("disconnected", {
+                    socketId: socket.id,
+                    username,
+                });
+            }
         });
     });
 
     socket.on("disconnect", () => {
-        const username = userSocketMap[socket.id];
         delete userSocketMap[socket.id];
-        console.log(`User disconnected: ${socket.id} with username ${username}`);
     });
 });
 
@@ -58,4 +71,3 @@ const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-

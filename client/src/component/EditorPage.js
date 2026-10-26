@@ -39,6 +39,11 @@ function EditorPage() {
                 setClients(clients)
             });
 
+            socketRef.current.on("disconnected", ({socketId, username}) => {
+                toast.success(`${username} left the room`);
+                setClients((prev) => prev.filter((client) => client.socketId !== socketId));
+            });
+
             socketRef.current.emit("join", {
                 roomId,
                 username,
@@ -50,6 +55,7 @@ function EditorPage() {
         return () => {
             socketRef.current?.disconnect();
         };
+        
     }, [navigate, roomId, username]);
 
     if (!username) {
@@ -87,7 +93,13 @@ function EditorPage() {
                             Copy Room Id
                         </button>
 
-                        <button className="btn btn-danger mb-3 px-3 mt-3">
+                        <button
+                            className="btn btn-danger mb-3 px-3 mt-3"
+                            onClick={() => {
+                                socketRef.current?.disconnect();
+                                navigate("/");
+                            }}
+                        >
                             Leave Room
                         </button>
                     </div>
