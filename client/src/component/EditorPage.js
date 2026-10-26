@@ -6,6 +6,7 @@ import { useNavigate, Navigate, useLocation, useParams } from 'react-router-dom'
 import toast from 'react-hot-toast';
 
 function EditorPage() {
+    const [clients, setClients] = useState([]);
     const socketRef = useRef(null);
     const location = useLocation();
     const { roomId } = useParams();
@@ -31,6 +32,13 @@ function EditorPage() {
             socketRef.current.on("connect_error", handleError);
             socketRef.current.on("connect_failed", handleError);
 
+            socketRef.current.on("joined", ({clients, username: joinedUsername, socketId }) => {
+                if (socketId !== socketRef.current.id) {
+                    toast.success(`${joinedUsername} joined`);
+                }
+                setClients(clients)
+            });
+
             socketRef.current.emit("join", {
                 roomId,
                 username,
@@ -43,11 +51,6 @@ function EditorPage() {
             socketRef.current?.disconnect();
         };
     }, [navigate, roomId, username]);
-
-    const [clients, setclients] = useState([
-        { socketId: 1, username: "Nitye Jain" },
-        { socketId: 2, username: "Devansh Bindal" },
-    ]);
 
     if (!username) {
         return <Navigate to="/" />

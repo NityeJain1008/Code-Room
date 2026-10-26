@@ -36,6 +36,14 @@ io.on("connection", (socket) => {
 
         const clients = getAllConnectedClients(roomId);
         console.log("Connected clients:", clients);
+
+        clients.forEach(({socketId}) => {
+            io.to(socketId).emit('joined', {
+                clients, 
+                username,
+                socketId: socket.id,
+            }) ;  
+        });
     });
 
     socket.on("disconnect", () => {
