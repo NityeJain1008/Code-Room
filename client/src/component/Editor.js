@@ -7,23 +7,29 @@ import "codemirror/addon/edit/closetag";
 import "codemirror/addon/edit/closebrackets";
 import "codemirror/lib/codemirror.css";
 
-function Editor({ socketRef, socket, roomId }) {
+function Editor({ socketRef, socket, roomId, codeMirrorRef }) {
     const editorRef = useRef(null);
 
     useEffect(() => {
-        const editor = CodeMirror.fromTextArea(
-            editorRef.current,
-            {
+        const editor = CodeMirror.fromTextArea(editorRef.current, {
                 mode: { name: "javascript", json: true },
                 theme: "dracula",
                 autoCloseTags: true,
                 autoCloseBrackets: true,
                 lineNumbers: true,
-            }
-        );
+                lineWrapping: window.matchMedia("(max-width: 767.98px)").matches,
+            });
         editorRef.current = editor;
+        codeMirrorRef.current = editor;
 
         editor.setSize(null, "100%");
+
+        const mobileViewport = window.matchMedia("(max-width: 767.98px)");
+        const updateLineWrapping = (event) => {
+            editor.setOption("lineWrapping", event.matches);
+            editor.refresh();
+        };
+        mobileViewport.addEventListener("change", updateLineWrapping);
 
         editor.on("change", (instance, changes) => {
             if (changes.origin !== "setValue") {
@@ -34,8 +40,12 @@ function Editor({ socketRef, socket, roomId }) {
             }
         });
 
-        return () => editor.toTextArea();
-    }, [roomId, socketRef]);
+        return () => {
+            mobileViewport.removeEventListener("change", updateLineWrapping);
+            codeMirrorRef.current = null;
+            editor.toTextArea();
+        };
+    }, [codeMirrorRef, roomId, socketRef]);
 
     useEffect(() => {
         if (!socket) {
@@ -60,7 +70,7 @@ function Editor({ socketRef, socket, roomId }) {
     }, [roomId, socket]);
 
     return (
-        <div style={{ height: "100%" }}>
+        <div className="editor-container">
             <textarea id="realTimeEditor" ref={editorRef} />
         </div>
     );

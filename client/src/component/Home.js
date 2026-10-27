@@ -36,7 +36,7 @@ function Home() {
                         <div className="card-body text-center bg-dark">
                             <img
                                 className="img-fluid mx-auto d-block py-custom"
-                                src="/images/codeRoom.png"
+                                src={`${process.env.PUBLIC_URL}/images/codeRoom.png`}
                                 alt="CodeRoom"
                                 style={{ maxWidth: 220 }}
                             />
