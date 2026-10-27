@@ -34,7 +34,7 @@ Code-Room is a real-time collaborative coding platform that allows multiple user
 | React Hot Toast | Notifications |
 | UUID | Unique room identifiers |
 | Axios | HTTP requests to the compiler service |
-| Judge0 API | Code execution and compilation |
+| ONLINECOMPILER API | Code execution and compilation |
 | Git & GitHub | Version control |
 
 ## Getting Started
