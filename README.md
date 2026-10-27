@@ -43,7 +43,7 @@ Code-Room is a real-time collaborative coding platform that allows multiple user
 
 - [Node.js and npm](https://nodejs.org/)
 - Git
-- A configured Judge0 API key if required by your compiler integration
+- A configured ONLINECOMPILER API key if required by your compiler integration
 
 ### 1. Clone the Repository
 
